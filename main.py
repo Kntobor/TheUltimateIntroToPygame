@@ -5,11 +5,11 @@ pygame.init()
 screen = pygame.display.set_mode((800, 400))
 pygame.display.set_caption('Runner')
 clock = pygame.time.Clock()
-testFont = pygame.font.Font('font\Pixeltype.ttf', 50)
+font = pygame.font.Font('font\Pixeltype.ttf', 50)
 
 skySurface = pygame.image.load('graphics\Sky.png').convert()
 groundSurface = pygame.image.load('graphics\ground.png').convert()
-scoreSurface = testFont.render('0', False, 'black')
+scoreSurface = font.render('0', False, 'black')
 scoreRect = scoreSurface.get_rect(center = (400, 30))
 
 snailSurface = pygame.image.load('graphics\snail\snail1.png').convert_alpha()
