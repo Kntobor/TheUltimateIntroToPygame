@@ -25,13 +25,11 @@ while True:
             pygame.quit()
             exit()
             break
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            if playerRect.bottom == 30:
-                playerGravity = -20
+        elif event.type == pygame.MOUSEBUTTONDOWN and playerRect.bottom == 300:
+            playerGravity = -20
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                if playerRect.bottom == 300:
-                    playerGravity = -20
+            if event.key == pygame.K_SPACE and playerRect.bottom == 300:
+                playerGravity = -20
     
     screen.blit(skySurface, (0, 0))
     screen.blit(groundSurface, (0, 300))
