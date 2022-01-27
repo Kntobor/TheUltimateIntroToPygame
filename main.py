@@ -24,16 +24,23 @@ while True:
             pygame.quit()
             exit()
             break
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            print(event.pos)
     
     screen.blit(skySurface, (0, 0))
     screen.blit(groundSurface, (0, 300))
     screen.blit(scoreSurface, scoreRect)
 
     snailRect.left -= 4
-    if snailRect.left < -100:
+    if snailRect.right <= 0:
         snailRect.left = 810
     screen.blit(snailSurface, snailRect)
     screen.blit(playerSurface, playerRect)
+
+    if playerRect.colliderect(snailRect):
+        pygame.quit()
+        exit()
+        break
 
     pygame.display.update()
     clock.tick(60)
