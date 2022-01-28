@@ -2,7 +2,7 @@ import pygame
 from sys import exit
 
 def displayScore():
-    currentTime = int(pygame.time.get_ticks() - timeSpent / 1000)
+    currentTime = int((pygame.time.get_ticks() - timeSpent )/ 1000)
     scoreSurface = font.render(f'{currentTime}', False, 'black')
     scoreRect = scoreSurface.get_rect(center = (400, 30))
     screen.blit(scoreSurface, scoreRect)
