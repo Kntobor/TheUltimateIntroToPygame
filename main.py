@@ -2,7 +2,7 @@ import pygame
 from sys import exit
 round = 1
 
-# Score system
+# Score System
 currentTime = 0
 def displayScore():
     global currentTime
@@ -15,7 +15,7 @@ def displayScore():
     screen.blit(scoreSurface, scoreRect)
 timeSpent = 0
 
-#PyGame setup
+#PyGame Setup
 pygame.init()
 screen = pygame.display.set_mode((800, 400))
 pygame.display.set_caption('Runner')
@@ -23,7 +23,7 @@ clock = pygame.time.Clock()
 gameOver = True
 font = pygame.font.Font('font\Pixeltype.ttf', 50)
 
-# Background assets
+# Background Assets
 skySurface = pygame.image.load('graphics\Sky.png').convert()
 groundSurface = pygame.image.load('graphics\ground.png').convert()
 
@@ -70,7 +70,7 @@ while True:
                     snailRect.right = 750
                     timeSpent = pygame.time.get_ticks
                     gameOver = False
-                    
+
     if gameOver == False:
         screen.blit(skySurface, (0, 0))
         screen.blit(groundSurface, (0, 300))
