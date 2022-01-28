@@ -4,6 +4,7 @@ round = 1
 
 # Score System
 currentTime = 0
+timeSpent = 0
 def displayScore():
     global currentTime
     if gameOver == False:
@@ -13,7 +14,6 @@ def displayScore():
         scoreSurface = font.render(f'Score: {currentTime}', False, 'white')
     scoreRect = scoreSurface.get_rect(center = (400, 30))
     screen.blit(scoreSurface, scoreRect)
-timeSpent = 0
 
 #PyGame Setup
 pygame.init()
