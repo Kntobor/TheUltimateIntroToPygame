@@ -1,5 +1,6 @@
 import pygame
 from sys import exit
+from random import randint
 round = 1
 
 # Score system
@@ -15,6 +16,15 @@ def displayScore():
     scoreRect = scoreSurface.get_rect(center = (400, 30))
     screen.blit(scoreSurface, scoreRect)
 
+def enemyMovement(enemyList):
+    if enemyList:
+        for rect in enemyList:
+            rect.x -= 5
+
+def displayEnemies(enemyList):
+    if enemyList:
+        for rect in enemyList:
+            screen.blit(snailSurface, rect)
 
 #PyGame setup
 pygame.init()
@@ -32,6 +42,8 @@ groundSurface = pygame.image.load('graphics\ground.png').convert()
 snailSurface = pygame.image.load('graphics\snail\snail1.png').convert_alpha()
 snailRect = snailSurface.get_rect(bottom = 300, right = 750)
 
+enemyRectList = []
+
 # Player
 playerSurface = pygame.image.load('graphics\Player\player_walk_1.png')
 playerRect = playerSurface.get_rect(bottom = 300, left = 80)
@@ -45,6 +57,10 @@ titleTextSurface = font.render('Runner', False, 'white')
 titleTextRect = titleTextSurface.get_rect(center = (400, 30))
 tutorialTextSurface = font.render('Click or press space to begin', False, 'white')
 tutorialTextRect = tutorialTextSurface.get_rect(center = (400, 300))
+
+# Timer
+enemyTimer = pygame.USEREVENT + 1
+pygame.time.set_timer(enemyTimer, 1500)
 
 # Game Loop
 while True:
@@ -71,16 +87,19 @@ while True:
                     snailRect.right = 750
                     timeSpent = pygame.time.get_ticks()
                     gameOver = False
+        elif event.type == enemyTimer and gameOver == False:
+            enemyRectList.append(snailSurface.get_rect(bottom = 300, right = randint(900, 1100)))
+            
                     
     if gameOver == False:
         screen.blit(skySurface, (0, 0))
         screen.blit(groundSurface, (0, 300))
         displayScore()
 
-        snailRect.left -= 4
-        if snailRect.right <= 0:
-            snailRect.left = 810
-        screen.blit(snailSurface, snailRect)
+        # snailRect.left -= 4
+        # if snailRect.right <= 0:
+        #     snailRect.left = 810
+        # screen.blit(snailSurface, snailRect)
 
         playerGravity+= 1
         playerRect.bottom += playerGravity
@@ -91,6 +110,11 @@ while True:
         if playerRect.colliderect(snailRect):
             round += 1
             gameOver = True
+
+        # Obstacle Movement
+        enemyMovement(enemyRectList)
+        displayEnemies(enemyRectList)
+
     elif gameOver == True:
         screen.fill((94, 129, 162))
         screen.blit(menuCharacterSurface, menuCharacterRect)
