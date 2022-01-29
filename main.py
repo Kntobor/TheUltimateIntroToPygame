@@ -36,7 +36,10 @@ def enemyMovement(enemyList):
 def displayEnemies(enemyList):
     if enemyList:
         for rect in enemyList:
-            screen.blit(snailSurface, rect)
+            if rect.bottom == 300:
+                screen.blit(snailSurface, rect)
+            elif rect.bottom == 210:
+                screen.blit(flySurface, rect)
 
 #PyGame setup
 pygame.init()
@@ -51,8 +54,9 @@ skySurface = pygame.image.load('graphics\Sky.png').convert()
 groundSurface = pygame.image.load('graphics\ground.png').convert()
 
 # Enemies
+flySurface = pygame.image.load('graphics\Fly\Fly1.png').convert_alpha()
 snailSurface = pygame.image.load('graphics\snail\snail1.png').convert_alpha()
-snailRect = snailSurface.get_rect(bottom = 300, right = 750)
+
 
 enemyRectList = []
 
@@ -87,7 +91,7 @@ while True:
                     playerGravity = -20
                 elif gameOver == True:
                     playerRect.bottom = 300
-                    snailRect.right = 750
+                    enemyRectList.clear()
                     timeSpent = pygame.time.get_ticks()
                     gameOver = False
         elif event.type == pygame.KEYDOWN:
@@ -96,11 +100,15 @@ while True:
                     playerGravity = -20
                 elif gameOver == True:
                     playerRect.bottom = 300
-                    snailRect.right = 750
+                    enemyRectList.clear()
                     timeSpent = pygame.time.get_ticks()
                     gameOver = False
         elif event.type == enemyTimer and gameOver == False:
-            enemyRectList.append(snailSurface.get_rect(bottom = 300, right = randint(900, 1100)))
+            enemyType = randint(1, 2)
+            if enemyType == 1:
+                enemyRectList.append(snailSurface.get_rect(bottom = 300, right = randint(900, 1100)))
+            elif enemyType == 2:
+                enemyRectList.append(flySurface.get_rect(bottom = 210, right = randint(900, 1100)))
             
                     
     if gameOver == False:
@@ -113,10 +121,6 @@ while True:
         if playerRect.bottom >= 300:
             playerRect.bottom = 300
         screen.blit(playerSurface, playerRect)
-
-        if playerRect.colliderect(snailRect):
-            round += 1
-            gameOver = True
 
         # Obstacle Movement
         enemyMovement(enemyRectList)
