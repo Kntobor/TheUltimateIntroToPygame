@@ -2,20 +2,21 @@ import pygame
 from sys import exit
 round = 1
 
-# Score System
-currentTime = 0
+# Score system
 timeSpent = 0
+currentTime = 0
 def displayScore():
     global currentTime
     if gameOver == False:
-        currentTime = int((pygame.time.get_ticks() - timeSpent )/ 1000)
-        scoreSurface = font.render(f'Score: {currentTime}', False, 'black')
+        currentTime = pygame.time.get_ticks() - timeSpent
+        scoreSurface = font.render(f'{int(currentTime / 1000)}', False, 'black')
     elif gameOver == True:
-        scoreSurface = font.render(f'Score: {currentTime}', False, 'white')
+        scoreSurface = font.render(f'Score: {int(currentTime / 1000)}', False, 'white')
     scoreRect = scoreSurface.get_rect(center = (400, 30))
     screen.blit(scoreSurface, scoreRect)
 
-#PyGame Setup
+
+#PyGame setup
 pygame.init()
 screen = pygame.display.set_mode((800, 400))
 pygame.display.set_caption('Runner')
@@ -23,7 +24,7 @@ clock = pygame.time.Clock()
 gameOver = True
 font = pygame.font.Font('font\Pixeltype.ttf', 50)
 
-# Background Assets
+# Background assets
 skySurface = pygame.image.load('graphics\Sky.png').convert()
 groundSurface = pygame.image.load('graphics\ground.png').convert()
 
@@ -68,9 +69,9 @@ while True:
                 elif gameOver == True:
                     playerRect.bottom = 300
                     snailRect.right = 750
-                    timeSpent = pygame.time.get_ticks
+                    timeSpent = pygame.time.get_ticks()
                     gameOver = False
-
+                    
     if gameOver == False:
         screen.blit(skySurface, (0, 0))
         screen.blit(groundSurface, (0, 300))
