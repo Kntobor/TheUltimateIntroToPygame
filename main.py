@@ -1,3 +1,4 @@
+from time import time
 import pygame
 from sys import exit
 from random import randint
@@ -17,9 +18,18 @@ def displayScore():
     screen.blit(scoreSurface, scoreRect)
 
 def enemyMovement(enemyList):
+    global timeSpent
+    global gameOver
+    global round
     if enemyList:
         for rect in enemyList:
             rect.x -= 5
+            if rect.colliderect(playerRect):
+                timeSpent = pygame.time.get_ticks()
+                round += 1 
+                enemyList.clear()
+                gameOver = True
+
 
 def displayEnemies(enemyList):
     if enemyList:
@@ -95,11 +105,6 @@ while True:
         screen.blit(skySurface, (0, 0))
         screen.blit(groundSurface, (0, 300))
         displayScore()
-
-        # snailRect.left -= 4
-        # if snailRect.right <= 0:
-        #     snailRect.left = 810
-        # screen.blit(snailSurface, snailRect)
 
         playerGravity+= 1
         playerRect.bottom += playerGravity
