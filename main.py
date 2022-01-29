@@ -29,6 +29,8 @@ def enemyMovement(enemyList):
                 round += 1 
                 enemyList.clear()
                 gameOver = True
+            if rect.right <= 0:
+                enemyList.remove(rect)
 
 
 def displayEnemies(enemyList):
