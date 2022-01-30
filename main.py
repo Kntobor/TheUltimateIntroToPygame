@@ -1,4 +1,3 @@
-from time import time
 import pygame
 from sys import exit
 from random import randint
@@ -41,6 +40,19 @@ def displayEnemies(enemyList):
             elif rect.bottom == 210:
                 screen.blit(flySurface, rect)
 
+def animatePlayer():
+    global playerSurface
+    global playerIndex
+
+    if playerRect.bottom < 300:
+        playerSurface = playerJump
+    else:
+        playerIndex += 0.1
+        if playerIndex >= len(playerWalk):
+            playerIndex = 0
+        playerSurface = playerWalk[int(playerIndex)]
+
+
 #PyGame setup
 pygame.init()
 screen = pygame.display.set_mode((800, 400))
@@ -57,11 +69,16 @@ groundSurface = pygame.image.load('graphics\ground.png').convert()
 flySurface = pygame.image.load('graphics\Fly\Fly1.png').convert_alpha()
 snailSurface = pygame.image.load('graphics\snail\snail1.png').convert_alpha()
 
-
 enemyRectList = []
 
 # Player
-playerSurface = pygame.image.load('graphics\Player\player_walk_1.png')
+playerWalkOne = pygame.image.load('graphics\Player\player_walk_1.png')
+playerWalkTwo = pygame.image.load('graphics\Player\player_walk_2.png')
+playerWalk = [playerWalkOne, playerWalkTwo]
+playerIndex = 0
+playerJump = pygame.image.load('graphics\Player\jump.png')
+
+playerSurface= playerWalk[playerIndex]
 playerRect = playerSurface.get_rect(bottom = 300, left = 80)
 playerGravity = 0
 
@@ -120,6 +137,7 @@ while True:
         playerRect.bottom += playerGravity
         if playerRect.bottom >= 300:
             playerRect.bottom = 300
+        animatePlayer()
         screen.blit(playerSurface, playerRect)
 
         # Obstacle Movement
