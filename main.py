@@ -3,6 +3,44 @@ from sys import exit
 from random import randint
 round = 1
 
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.gravity = 0
+        self.walkOne = pygame.image.load('graphics\Player\player_walk_1.png')
+        self.walkTwo = pygame.image.load('graphics\Player\player_walk_2.png')
+        self.walk = [self.walkOne, self.walkTwo]
+        self.index = 0
+        self.jump = pygame.image.load('graphics\Player\jump.png')
+
+        self.image = self.walk[self.index]
+        self.rect = self.image.get_rect(midbottom = (200, 300))
+    
+    def playerInput(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_SPACE] and self.rect.bottom >= 300:
+            self.gravity = -20
+
+    def applyGravity(self):
+        self.gravity += 1
+        self.rect.y += self.gravity
+        if self.rect.bottom >= 300:
+            self.rect.bottom = 300
+
+    def animate(self):
+        if self.rect.bottom < 300:
+            self.image = self.jump
+        else:
+            self.index += 0.1
+            if self.index >= len(self.walk):
+                self.index = 0
+            self.image = self.walk[int(self.index)]
+
+    def update(self):
+        self.playerInput()
+        self.applyGravity()
+        self.animate()
+
 # Score system
 timeSpent = 0
 currentTime = 0
@@ -95,6 +133,9 @@ tutorialTextRect = tutorialTextSurface.get_rect(center = (400, 300))
 enemyTimer = pygame.USEREVENT + 1
 pygame.time.set_timer(enemyTimer, 1500)
 
+player = pygame.sprite.GroupSingle()
+player.add(Player())
+
 # Game Loop
 while True:
     # Event Checker
@@ -139,6 +180,8 @@ while True:
             playerRect.bottom = 300
         animatePlayer()
         screen.blit(playerSurface, playerRect)
+        player.draw(screen)
+        player.update()
 
         # Obstacle Movement
         enemyMovement(enemyRectList)
