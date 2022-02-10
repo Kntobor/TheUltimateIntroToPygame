@@ -15,10 +15,14 @@ class Player(pygame.sprite.Sprite):
 
         self.image = self.walk[self.index]
         self.rect = self.image.get_rect(bottom = 300, left = 80)
+
+        self.jumpSound = pygame.mixer.Sound('audio\jump.mp3')
+        self.jumpSound.set_volume(0.5)
     
     def playerInput(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE] and self.rect.bottom >= 300:
+            self.jumpSound.play()
             self.gravity = -20
 
     def applyGravity(self):
@@ -35,16 +39,6 @@ class Player(pygame.sprite.Sprite):
             if self.index >= len(self.walk):
                 self.index = 0
             self.image = self.walk[int(self.index)]
-
-    def collisions(self):
-        global round
-        global timeSpent
-        global gameOver
-        if pygame.sprite.spritecollideany(self.rect, enemyList):
-            timeSpent = pygame.time.get_ticks()
-            round += 1 
-            enemyList.clear()
-            gameOver = True
 
     def update(self):
         self.playerInput()
@@ -109,6 +103,12 @@ def animatePlayer():
             playerIndex = 0
         playerSurface = playerWalk[int(playerIndex)]
 
+def collisions():
+    if pygame.sprite.spritecollide(player.sprite, enemyList, False):
+        enemyList.empty()
+        return True
+    else:
+        return False
 
 #PyGame setup
 pygame.init()
@@ -117,6 +117,10 @@ pygame.display.set_caption('Runner')
 clock = pygame.time.Clock()
 gameOver = True
 font = pygame.font.Font('font\Pixeltype.ttf', 50)
+
+backgroundMusic = pygame.mixer.Sound('audio\music.wav')
+backgroundMusic.play(loops = -1)
+
 
 # Background assets
 skySurface = pygame.image.load('graphics\Sky.png').convert()
@@ -139,7 +143,7 @@ menuCharacterSurface = pygame.transform.scale(menuCharacterSurface, (136, 168))
 menuCharacterRect = menuCharacterSurface.get_rect(center = (400, 200))
 titleTextSurface = font.render('Runner', False, 'white')
 titleTextRect = titleTextSurface.get_rect(center = (400, 30))
-tutorialTextSurface = font.render('Click or press space to begin', False, 'white')
+tutorialTextSurface = font.render('Press space to begin', False, 'white')
 tutorialTextRect = tutorialTextSurface.get_rect(center = (400, 300))
 
 # Timer
@@ -182,17 +186,13 @@ while True:
         screen.blit(groundSurface, (0, 300))
         displayScore()
 
-        playerGravity+= 1
-        playerRect.bottom += playerGravity
-        if playerRect.bottom >= 300:
-            playerRect.bottom = 300
-        animatePlayer()
-        screen.blit(playerSurface, playerRect)
         player.draw(screen)
         player.update()
 
         enemyList.draw(screen)
         enemyList.update()
+
+        gameOver = collisions()
 
     elif gameOver == True:
         screen.fill((94, 129, 162))
