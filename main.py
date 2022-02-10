@@ -164,7 +164,6 @@ while True:
                     playerGravity = -20
                 elif gameOver == True:
                     playerRect.bottom = 300
-                    enemyRectList.clear()
                     timeSpent = pygame.time.get_ticks()
                     gameOver = False
         elif event.type == pygame.KEYDOWN:
