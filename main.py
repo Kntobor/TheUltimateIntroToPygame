@@ -14,7 +14,7 @@ class Player(pygame.sprite.Sprite):
         self.jump = pygame.image.load('graphics\Player\jump.png')
 
         self.image = self.walk[self.index]
-        self.rect = self.image.get_rect(midbottom = (200, 300))
+        self.rect = self.image.get_rect(bottom = 300, left = 80)
     
     def playerInput(self):
         keys = pygame.key.get_pressed()
@@ -36,10 +36,52 @@ class Player(pygame.sprite.Sprite):
                 self.index = 0
             self.image = self.walk[int(self.index)]
 
+    def collisions(self):
+        global round
+        global timeSpent
+        global gameOver
+        if pygame.sprite.spritecollideany(self.rect, enemyList):
+            timeSpent = pygame.time.get_ticks()
+            round += 1 
+            enemyList.clear()
+            gameOver = True
+
     def update(self):
         self.playerInput()
         self.applyGravity()
         self.animate()
+
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self, type):
+        super().__init__()
+
+        if type == 0:
+            self.frameOne = pygame.image.load('graphics\Fly\Fly1.png').convert_alpha()
+            self.frameTwo = pygame.image.load('graphics\Fly\Fly2.png').convert_alpha()
+            self.ypos = 210
+        else:
+            self.frameOne = pygame.image.load('graphics\snail\snail1.png').convert_alpha()
+            self.frameTwo = pygame.image.load('graphics\snail\snail2.png').convert_alpha()
+            self.ypos = 300
+
+        self.frames = [self.frameOne, self.frameTwo]
+        self.index = 0
+        self.image = self.frames[self.index]
+        self.rect = self.image.get_rect(midbottom = (randint(900, 1100), self.ypos))
+    
+    def animate(self):
+        self.rect.x -= 5
+        self.index += 0.1
+        if self.index >= len(self.frames):
+            self.index = 0
+        self.image = self.frames[int(self.index)]
+        
+        # self.rect = self.image.get_rect(bottom = self.ypos, x = self.rect.x)
+        
+        # screen.blit(self.image, self.rect)
+
+    def update(self):
+        self.animate()   
 
 # Score system
 timeSpent = 0
@@ -54,29 +96,6 @@ def displayScore():
     scoreRect = scoreSurface.get_rect(center = (400, 30))
     screen.blit(scoreSurface, scoreRect)
 
-def enemyMovement(enemyList):
-    global timeSpent
-    global gameOver
-    global round
-    if enemyList:
-        for rect in enemyList:
-            rect.x -= 5
-            if rect.colliderect(playerRect):
-                timeSpent = pygame.time.get_ticks()
-                round += 1 
-                enemyList.clear()
-                gameOver = True
-            if rect.right <= 0:
-                enemyList.remove(rect)
-
-
-def displayEnemies(enemyList):
-    if enemyList:
-        for rect in enemyList:
-            if rect.bottom == 300:
-                screen.blit(snailSurface, rect)
-            elif rect.bottom == 210:
-                screen.blit(flySurface, rect)
 
 def animatePlayer():
     global playerSurface
@@ -102,12 +121,6 @@ font = pygame.font.Font('font\Pixeltype.ttf', 50)
 # Background assets
 skySurface = pygame.image.load('graphics\Sky.png').convert()
 groundSurface = pygame.image.load('graphics\ground.png').convert()
-
-# Enemies
-flySurface = pygame.image.load('graphics\Fly\Fly1.png').convert_alpha()
-snailSurface = pygame.image.load('graphics\snail\snail1.png').convert_alpha()
-
-enemyRectList = []
 
 # Player
 playerWalkOne = pygame.image.load('graphics\Player\player_walk_1.png')
@@ -136,6 +149,8 @@ pygame.time.set_timer(enemyTimer, 1500)
 player = pygame.sprite.GroupSingle()
 player.add(Player())
 
+enemyList = pygame.sprite.Group()
+
 # Game Loop
 while True:
     # Event Checker
@@ -158,17 +173,11 @@ while True:
                     playerGravity = -20
                 elif gameOver == True:
                     playerRect.bottom = 300
-                    enemyRectList.clear()
                     timeSpent = pygame.time.get_ticks()
                     gameOver = False
         elif event.type == enemyTimer and gameOver == False:
-            enemyType = randint(1, 2)
-            if enemyType == 1:
-                enemyRectList.append(snailSurface.get_rect(bottom = 300, right = randint(900, 1100)))
-            elif enemyType == 2:
-                enemyRectList.append(flySurface.get_rect(bottom = 210, right = randint(900, 1100)))
+            enemyList.add(Enemy(randint(0, 1)))
             
-                    
     if gameOver == False:
         screen.blit(skySurface, (0, 0))
         screen.blit(groundSurface, (0, 300))
@@ -183,9 +192,8 @@ while True:
         player.draw(screen)
         player.update()
 
-        # Obstacle Movement
-        enemyMovement(enemyRectList)
-        displayEnemies(enemyRectList)
+        enemyList.draw(screen)
+        enemyList.update()
 
     elif gameOver == True:
         screen.fill((94, 129, 162))
